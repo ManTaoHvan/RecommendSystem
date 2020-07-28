@@ -1,0 +1,32 @@
+注集群的软件路径都在 /usr/local/ 目录下
+
+1)test包下
+(1)test包下有测试类
+    StreamingRecommender先测试一下 看能不能接受到kafka的消息。如果能就是 就 运行com.hmt.streaming包下的程序。
+    先启动zookeeper和kafka(进行生产和消费)
+    然后开始运行程序
+
+2)com.hmt.streaming包 在启动该程序之前 linux 需要启动以下进程。
+(1)redis
+    开启redis：
+    [root@bigData111 redis]# ./bin/redis-server ./redis.conf
+    开启redis-cli：
+    [root@bigData111 redis]#  ./bin/redis-cli
+    127.0.0.1:6379>  lpush uid:1 1129:2.0 1172:4.0 1263:2.0 1287:2.0 1293:2.0 1339:3.5 1343:2.0 1371:2.3 #存一条数据
+(2)mongdb
+    开启mongdb：
+    [root@bigData111 mongodb]# ./bin/mongod -config ./data/mongodb.conf
+(3)zookeeper
+    开启zookeeper：
+    [root@bigData111 zookeeper-3.4.10]# ./bin/zkServer.sh start
+(4)kafka
+    (先确保组id和生产者的存在)
+    开启kafka：
+    [itstar@bigdata11 kafka]$ bin/kafka-server-start.sh config/server.properties &
+    开启生成者：
+    [root@bigData111 kafka_2.12-0.10.2.1]# bin/kafka-console-producer.sh --broker-list bigData111:9092 --topic Recommend #输入数据：3|2|5.0|15644120331
+    开启消费者组：
+    [root@bigData111 kafka_2.12-0.10.2.1]# ./bin/kafka-console-consumer.sh --bootstrap-server bigdata111:9092 --topic Recommend --consumer.config config/consumer.properties
+    关闭kafka：
+    [itstar@bigdata11 kafka]$  bin/kafka-server-stop.sh stop #注意不要kill进程 否者下次启动会异常
+    这里为了方便 就没有启动flum，如果要启动它的flum配置文件在 usr/local/apache-flume-1.7.0-bin/conf/flume-kafka.conf
